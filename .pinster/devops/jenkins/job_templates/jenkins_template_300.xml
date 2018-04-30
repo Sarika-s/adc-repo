@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.10">
+  <actions/>
+  <description>This job has been created automatically from AD-Pinster framework with template id: 01</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <hudson.triggers.SCMTrigger>
+          <spec>H/2 * * * *</spec>
+          <ignorePostCommitHooks>false</ignorePostCommitHooks>
+        </hudson.triggers.SCMTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.30">
+    <script>node(&apos;template.nodename&apos;) {
+	
+        stage(&apos;Code Checkout&apos;) {
+
+               echo &apos;Checking out code...&apos;
+               checkout([$class: &apos;GitSCM&apos;, branches: [[name: &apos;*/template.branchname&apos;]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: &apos;template.gitcredentialsId&apos;, url: &apos;template.git.url&apos;]]])
+        }
+
+        stage(&apos;Code Analysis&apos;) {
+                echo &apos;Analysing code...&apos;
+                sh returnStdout: true, script: &apos;&apos;&apos;cd template.servicename
+                mvn -B -V -U -e sonar:sonar -Dsonar.host.url=\&apos;template.sonarurl\&apos;&apos;&apos;&apos;
+        }
+
+        stage(&apos;Code Build&apos;) {
+                echo &apos;Building template.servicename ..&apos;
+ 		        sh returnStdout: true, script: &apos;&apos;&apos;cd template.servicename
+		        mvn package -Pprod docker:build -DskipTests&apos;&apos;&apos;
+        }
+
+        stage(&apos;Publish Docker Images&apos;) {
+                echo &apos;Publishing image for template.servicename ..&apos;
+                sh returnStdout: true, script: &apos;&apos;&apos;cd template.servicename
+                mvn package -Pprod docker:build docker:push -DskipTests&apos;&apos;&apos;
+        }
+
+        stage(&apos;Nexus Artifacts upload&apos;) {
+                echo &apos;Uploading template.servicename artifacts to nexus..&apos;
+				//nexusArtifactUploader artifacts: [[artifactId: &apos;template.servicename&apos;, classifier: &apos;&apos;, file: &apos;template.servicename/target/template.servicename-0.0.1-SNAPSHOT.war&apos;, type: &apos;war&apos;]], credentialsId: &apos;template.nexuscred&apos;, groupId: &apos;com.hcl&apos;, nexusUrl: &apos;template.nexusurl&apos;, nexusVersion: &apos;nexus2&apos;, protocol: &apos;http&apos;, repository: &apos;Snapshots&apos;, version: &apos;0.0.1&apos;
+             }
+
+        stage(&apos;Docker Compose Run&apos;) {
+                echo &apos;Stopping current images..&apos;
+                sh returnStdout: true, script: &apos;&apos;&apos;cd template.servicename
+                        docker-compose down&apos;&apos;&apos;
+                        echo &apos;Running new images..&apos;
+                sh returnStdout: true, script: &apos;&apos;&apos;cd template.servicename
+                        docker-compose up -d&apos;&apos;&apos;
+        }
+}
+ </script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>

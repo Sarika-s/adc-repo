@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.10">
+  <actions/>
+  <description>This job has been created automatically from HCL ADC framework using Mule Proxy template with template name as jenkins_template_generate-mule-api</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <hudson.triggers.SCMTrigger>
+          <spec>H/2 * * * *</spec>
+          <ignorePostCommitHooks>false</ignorePostCommitHooks>
+        </hudson.triggers.SCMTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.29">
+    <script>node(&apos;master&apos;) {
+
+        stage(&apos;Code Checkout&apos;) {
+               echo &apos;Checking out code...&apos;
+               checkout([$class: &apos;GitSCM&apos;, branches: [[name: &apos;*/test-contact-target-api&apos;]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: &apos;Mulesoft-GitHub-Sarika-Repo&apos;, url: &apos;https://github.com/SarikaSehra/adc-repo.git&apos;]]])
+        }
+
+        stage(&apos;Code Build&apos;) {
+                echo &apos;Building code...&apos;
+                sh returnStdout: true, script: &apos;&apos;&apos;cd test-contact-mule-api
+                mvn clean package -DskipTests=true -s settings.xml &apos;&apos;&apos;
+        }
+
+        stage(&apos;Code Tests&apos;) {
+                echo &apos;Running test cases for test-contact-mule-api ..&apos;
+                sh returnStdout: true, script: &apos;&apos;&apos;cd test-contact-mule-api
+                mvn clean test -s settings.xml &apos;&apos;&apos;
+        }
+		
+		stage('Publish Reports'){
+            echo 'Publish Reports ..'
+            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: &apos;test-contact-mule-api/target/munit-reports/coverage&apos; , reportFiles: 'summary.html', reportName: 'CodeCoverage', reportTitles: ''])
+        }
+
+        stage(&apos;Nexus Artifacts upload&apos;) {
+                echo &apos;Uploading test-contact-mule-api artifacts to nexus..&apos;
+                //def pom=readMavenPom file: &apos;test-contact-mule-api/pom.xml&apos;
+                //def this_artifact_name=&quot;${pom.artifactId}-${pom.version}&quot;
+                // echo this_artifact_name
+                //nexusArtifactUploader artifacts: [[artifactId: pom.artifactId, classifier: &apos;&apos;, file: &apos;test-contact-mule-api/target/test-contact-mule-api-0.0.1-SNAPSHOT.zip&apos;, type: &apos;zip&apos;]], credentialsId: &apos;template.nexuscred&apos;, groupId: pom.groupId, nexusUrl: &apos;template.nexusurl&apos;, nexusVersion: &apos;nexus2&apos;, protocol: &apos;http&apos;, repository: &apos;Snapshots&apos;, version: pom.version
+       }
+
+        stage(&apos;Deploy the Generated Mule API&apos;) {
+                echo &apos;Deploying Mule Proxy test-contact-mule-api ..&apos;
+                sh returnStdout: true, script: &apos;&apos;&apos;cd test-contact-mule-api
+                mvn clean deploy -DskipTests=true -s settings.xml &apos;&apos;&apos;
+        }
+}
+ </script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>

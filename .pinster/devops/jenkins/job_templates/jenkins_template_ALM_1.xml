@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.0.5">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>template.git.url</url>
+        <credentialsId>ALM_BIT_BUCKET_54.172.53.83</credentialsId>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/template.branchname</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <hudson.triggers.SCMTrigger>
+      <spec>H/2 * * * *</spec>
+      <ignorePostCommitHooks>false</ignorePostCommitHooks>
+    </hudson.triggers.SCMTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Maven>
+      <targets>sonar:sonar -Dsonar.host.url=http://10.0.11.54:9000</targets>
+      <mavenName>MAVEN_HOME</mavenName>
+      <pom>template.servicename/pom.xml</pom>
+      <usePrivateRepository>false</usePrivateRepository>
+      <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+      <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
+      <injectBuildVariables>false</injectBuildVariables>
+    </hudson.tasks.Maven>
+    <hudson.tasks.Shell>
+      <command>cd template.servicename
+mvn package -Pprod docker:build -DskipTests</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>cd gateway
+mvn package -Pprod docker:build -DskipTests</command>
+    </hudson.tasks.Shell>
+    <sp.sd.nexusartifactuploader.NexusArtifactUploader plugin="nexus-artifact-uploader@2.9">
+      <nexusVersion>nexus2</nexusVersion>
+      <protocol>http</protocol>
+      <nexusUrl>10.0.11.54:9091/nexus</nexusUrl>
+      <groupId>com.hcl</groupId>
+      <version>0.0.1</version>
+      <repository>releases</repository>
+      <artifacts>
+        <sp.sd.nexusartifactuploader.Artifact>
+          <artifactId>gateway</artifactId>
+          <type>war</type>
+          <classifier></classifier>
+          <file>gateway/target/gateway-0.0.1-SNAPSHOT.war</file>
+        </sp.sd.nexusartifactuploader.Artifact>
+        <sp.sd.nexusartifactuploader.Artifact>
+          <artifactId>template.servicename</artifactId>
+          <type>war</type>
+          <classifier></classifier>
+          <file>template.servicename/target/template.servicename-0.0.1-SNAPSHOT.war</file>
+        </sp.sd.nexusartifactuploader.Artifact>
+      </artifacts>
+      <credentialsId>b83e6f77-53a5-48a2-8677-6bb2cd1aa4c2</credentialsId>
+    </sp.sd.nexusartifactuploader.NexusArtifactUploader>
+    <hudson.tasks.Maven>
+      <targets>sonar:sonar -Dsonar.host.url=http://10.0.11.54:9000</targets>
+      <mavenName>MAVEN_HOME</mavenName>
+      <pom>gateway/pom.xml</pom>
+      <usePrivateRepository>false</usePrivateRepository>
+      <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+      <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
+      <injectBuildVariables>false</injectBuildVariables>
+    </hudson.tasks.Maven>
+  </builders>
+  <publishers>
+    <hudson.plugins.jira.JiraIssueUpdater plugin="jira@2.3">
+      <issueSelector class="hudson.plugins.jira.selector.JqlIssueSelector">
+        <jql>key = template.storyid</jql>
+      </issueSelector>
+      <labels/>
+    </hudson.plugins.jira.JiraIssueUpdater>
+  </publishers>
+  <buildWrappers/>
+</project>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd">
+
+<munit:config doc:name="Munit configuration" mock-connectors="false" mock-inbounds="false"/>
+<spring:beans>
+  <spring:import resource="classpath:api.xml"/>
+</spring:beans>
+<http:request-config name="HTTP_Request_Configuration" host="localhost" port="${http.port}" basePath="api" doc:name="HTTP Request Configuration"/>
+<munit:test name="post:Contacts:application/json:test-contact-mule-api-config-200-application/json-FlowTest" description="Verifying functionality of [post:Contacts:application/json:test-contact-mule-api-config-200-application/json]">
+  <mock:when messageProcessor=".*:.*" doc:name="Mock">
+    <mock:with-attributes>
+      <mock:with-attribute name="doc:name" whereValue="#['Set Payload POST-Contacts']"/>
+    </mock:with-attributes>
+    <mock:then-return payload="#[getResource('mule-mock-post-Contacts-200-pos-payload.txt').asString()]" mimeType="application/json"/>
+  </mock:when>
+  <set-payload value="#[getResource('mule-test-post-Contacts-pos-input.txt').asString()]" mimeType="application/json" doc:name="Set Payload"/>
+  <http:request config-ref="HTTP_Request_Configuration" method="post" path="/Contacts" doc:name="HTTP">
+    <http:request-builder>
+      <http:header headerName="Accept" value="application/json"/>
+      <http:header headerName="Content-Type" value="application/json"/>
+    </http:request-builder>
+  </http:request>
+  <object-to-string-transformer doc:name="http response to String"/>
+  <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(200))]" doc:name="assert that - http.status eq 200"/>
+  <!--<munit:assert-on-equals message="The response payload is not correct!" expectedValue="#[getResource('mule-test-post-Contacts-200-pos-output.txt').asString()] actualValue="#[payload]" doc:name="assert that - payload is as expected" />-->
+</munit:test>
+</mule>

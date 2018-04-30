@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings
+    xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <pluginGroups>
+        <pluginGroup>org.mule.tools</pluginGroup>
+    </pluginGroups>
+    <servers>
+        <server>
+            <id>mule-ee-repo</id>
+            <username>hclamerica.nexus</username>
+            <password>hjfdDF54gfgf38fu</password>
+        </server>
+    </servers>
+    <mirrors></mirrors>
+    <profiles>
+        <profile>
+            <id>mule-ee-profile</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <mule-maven-plugin-version>2.2.1</mule-maven-plugin-version>
+                <mule-username>anilsinghr</mule-username>
+                <mule-password>Outlook6</mule-password>
+                <mule-client-id>18c123f6cded490497764d72ffdda6c0</mule-client-id>
+                <mule-client-secret>97992EFC4BE7466f8fF3Ca1dE887c69B</mule-client-secret>
+                <deployment-type>cloudhub</deployment-type>
+				
+				<business-group></business-group>
+				
+				
+				<target-name>null</target-name>
+				<target-type>null</target-type>
+                <worker-size>Micro</worker-size>
+                <worker-count>1</worker-count>
+                <env-name>Sandbox</env-name>
+            </properties>
+            <repositories>
+                <repository>
+                    <id>mule-ee-repo</id>
+                    <name>mule-ee-repo</name>
+                    <url>https://repository.mulesoft.org/nexus-ee/content/repositories/releases-ee/</url>
+                    <layout>default</layout>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
+    <activeProfiles>
+        <activeProfile>mule-ee-profile</activeProfile>
+    </activeProfiles>
+</settings>

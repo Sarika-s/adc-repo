@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.10">
+  <actions/>
+  <description>This job has been created automatically from HCL ADC framework using Spring-Boot template with template name as jenkins_template_springboot</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <hudson.triggers.SCMTrigger>
+          <spec>H/2 * * * *</spec>
+          <ignorePostCommitHooks>false</ignorePostCommitHooks>
+        </hudson.triggers.SCMTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.30">
+    <script>node(&apos;template.nodename&apos;) {
+
+        stage(&apos;Code Checkout&apos;) {
+               echo &apos;Checking out code...&apos;
+               checkout([$class: &apos;GitSCM&apos;, branches: [[name: &apos;*/template.branchname&apos;]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: &apos;template.gitcredentialsId&apos;, url: &apos;template.git.url&apos;]]])
+        }
+
+        stage(&apos; Application Build and Dockerization &apos;) {
+                echo &apos;Building code...&apos;
+                sh returnStdout: true, script: &apos;&apos;&apos;cd template.servicename
+                mvn clean package docker:build -DskipTests&apos;&apos;&apos;
+        }
+
+        stage(&apos;Push Image to Docker Regsitry &apos;) {
+                echo &apos;Pushing docker image for template.servicename to docker registry..&apos;
+ 		        sh returnStdout: true, script: &apos;&apos;&apos;cd template.servicename
+		        docker login template.dockerRegistryUrl -u template.registryUser -p template.registryPassword 
+				docker tag template.imageName template.registryProjectName/template.appName:latest 
+				docker push template.registryProjectName/template.appName:latest 
+				docker logout template.dockerRegistryUrl&apos;&apos;&apos;
+        }
+
+        stage(&apos;Code Analysis&apos;) {
+                echo &apos;Analysing code for template.servicename...&apos;
+                //sh returnStdout: true, script: &apos;&apos;&apos;cd template.servicename
+                //mvn clean test -B -V -U -e sonar:sonar -Dsonar.host.url=\&apos;template.sonarurl\&apos;&apos;&apos;&apos;
+        }
+
+        stage(&apos;Deploy app to Openshift &apos;) {
+                echo &apos;Deploying template.servicename to Openshift..&apos;
+                sh returnStdout: true, script: &apos;&apos;&apos; cd template.servicename
+				oc login template.OpenshiftLoginUrl --insecure-skip-tls-verify=false -u template.openShiftUser -p template.openShiftPassword
+				oc project template.openshiftProjectName
+				oc delete all -l app=template.appName
+                oc new-app -f ../openshift-manifest/openshift-app-template.json
+				oc logout&apos;&apos;&apos;
+        }		
+		
+}
+ </script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>

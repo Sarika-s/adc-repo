@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.15">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>30</daysToKeep>
+        <numToKeep>5</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>5</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
+    <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.2">
+      <gitLabConnection></gitLabConnection>
+    </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    <com.synopsys.arc.jenkinsci.plugins.jobrestrictions.jobs.JobRestrictionProperty plugin="job-restrictions@0.6"/>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <hudson.triggers.SCMTrigger>
+          <spec>H H * * *</spec>
+          <ignorePostCommitHooks>false</ignorePostCommitHooks>
+        </hudson.triggers.SCMTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.42">
+    <script>node(&apos;template.nodename&apos;) {
+        stage(&apos;Checkout&apos;) {
+            echo &apos;Checking out code...&apos;
+                        checkout([$class: &apos;GitSCM&apos;, branches: [[name: &apos;*/template.branchname&apos;]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: &apos;template.gitcredentialsId&apos;, url: &apos;template.git.url&apos;]]])
+        }
+
+        stage(&apos;Compile&apos;) {
+            echo &apos;Building ..&apos;
+                    sh returnStdout: true, script: &apos;&apos;&apos;cd template.servicename
+                    mvn clean package -DskipTests&apos;&apos;&apos;
+        }
+
+                stage(&apos;Running Tests&apos;) {
+                echo &apos;Running test cases for template.servicename ..&apos;
+                            sh returnStdout: true, script: &apos;&apos;&apos;cd template.servicename
+                            mvn clean test &apos;&apos;&apos;
+        }
+
+        stage(&apos;Code Analysis&apos;) {
+                echo &apos;Analysing code for template.servicename...&apos;
+                //sh returnStdout: true, script: &apos;&apos;&apos;cd template.servicename
+                //mvn clean test -B -V -U -e sonar:sonar -Dsonar.host.url=\&apos;template.sonarurl\&apos;&apos;&apos;&apos;
+        }
+
+        stage(&apos;Building Artifacts&apos;) {
+            echo &apos;Building ..&apos;
+                    sh returnStdout: true, script: &apos;&apos;&apos;cd template.servicename
+                    mvn clean install -DskipTests&apos;&apos;&apos;
+        }
+
+        stage(&apos;Deployed Portlet Cleanup&apos;) {
+                        echo &apos;Clearing the work folder&apos;
+                        sh &apos;&apos;&apos;if [ -d &quot;/apps/liferay/work/template.servicename-1.0.0&quot; ]
+                        then
+                           sudo mv /apps/liferay/work/template.servicename-1.0.0 /tmp/`date +&apos;%Y%m%d%H%M%S&apos;`
+                        fi
+                        &apos;&apos;&apos;
+                        echo &apos;Clearing the osgi/war folder&apos;
+                        sh &apos;&apos;&apos;if [ -f &quot;/apps/liferay/osgi/war/template.servicename.war&quot; ]
+                        then
+                           sudo rm /apps/liferay/osgi/war/template.servicename.war
+                        fi
+                        &apos;&apos;&apos;
+        }
+
+        stage(&apos;Deploy Portlet&apos;) {
+                        echo &apos;Copying war after removing build SNAPSHOT version&apos;
+            sh &apos;&apos;&apos;cp -R template.servicename/target/template.servicename-*.war template.servicename/target/template.servicename.war&apos;&apos;&apos;
+            echo &apos;Copying war  to LifeRay&apos;
+            sh &apos;&apos;&apos;sudo cp -R template.servicename/target/template.servicename.war /apps/liferay/deploy/&apos;&apos;&apos;
+
+        }
+}
+</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>

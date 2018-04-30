@@ -1,0 +1,41 @@
+#%RAML 0.8
+title: ContactAPI
+version: 1.0
+baseUri: "http://contact-mule-impl-final.cloudhub.io"
+/Contacts: 
+    displayName: resourceName
+    post: 
+        body: 
+            application/json: 
+                example: |
+                    {
+                    "orgId": "1",
+                    "last_name": "Walker"
+                    }
+        responses: 
+            "200": 
+                body: 
+                    application/json: 
+                        example: |
+                            [{
+                              "id": "1",
+                              "FirstName": "Nimish",
+                              "LasttName": "Rawal",
+                              "phone": "1-(318)596-8473",
+                              "email": "ewalker0@liveinternet.ru"
+                            },
+                            {
+                              "id": "1",
+                              "FirstName": "Nimish",
+                              "LasttName": "Rawal",
+                              "phone": "1-(123)456-8473",
+                              "email": "nim.raw0@liveinternet.ru"
+                            },
+                            {
+                              "id": "1",
+                              "FirstName": "Karthik",
+                              "LasttName": "Nat",
+                              "phone": "1-(123)456-8473",
+                              "email": "kar.nat0@liveinternet.in"
+                            }
+                            ]
