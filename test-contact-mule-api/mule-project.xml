@@ -2,4 +2,5 @@
 <mule-project xmlns="http://www.mulesoft.com/tooling/project" runtimeId="org.mule.tooling.server.3.9.0.ee" schemaVersion="5.3.0.0">
     <name>test-contact-mule-api</name>
     <description>This is an auto generated proxy project using HCL ADvantage Code.</description>
+    <muleExtension name="Salesforce" qualifier="org.mule.tooling.ui.contribution.sfdc.3.5.0"/>
 </mule-project>

@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.mulesoft.org/schema/mule/api-platform-gw http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd">
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/api-platform-gw http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd
+http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
   
   <http:listener-config name="test-contact-mule-api-httpListenerConfig" host="0.0.0.0" port="${http.port}" doc:name="HTTP Listener Configuration"/>
   <apikit:config name="test-contact-mule-api-config" raml="api.raml" consoleEnabled="false" doc:name="Router" keepRamlBaseUri="false"/>
   <api-platform-gw:api id="${proxy.api.id}" apiName="${proxy.api.name}" version="${proxy.api.version}" flowRef="test-contact-mule-api-main" create="true" apikitRef="test-contact-mule-api-config" doc:name="API Autodiscovery"/>
+    <sfdc:config name="Salesforce__Basic_Authentication" username="rajat.sehra@gmail.com" password="Sarika@03081980" securityToken="Ogj1vYwAHZqgxvi9B47YJDNmH" doc:name="Salesforce: Basic Authentication"/>
   
   <flow name="test-contact-mule-api-main">
     <http:listener config-ref="test-contact-mule-api-httpListenerConfig" path="/api/*" doc:name="HTTP"/>
@@ -19,29 +26,25 @@
   
   <flow name="post:/Contacts:application/json:test-contact-mule-api-config">
     <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
-    <set-payload value="[{
-    &quot;id&quot;: &quot;1&quot;,
-    &quot;FirstName&quot;: &quot;Nimish&quot;,
-    &quot;LasttName&quot;: &quot;Rawal&quot;,
-    &quot;phone&quot;: &quot;1-(318)596-8473&quot;,
-    &quot;email&quot;: &quot;ewalker0@liveinternet.ru&quot;
-    },
-    {
-    &quot;id&quot;: &quot;1&quot;,
-    &quot;FirstName&quot;: &quot;Nimish&quot;,
-    &quot;LasttName&quot;: &quot;Rawal&quot;,
-    &quot;phone&quot;: &quot;1-(123)456-8473&quot;,
-    &quot;email&quot;: &quot;nim.raw0@liveinternet.ru&quot;
-    },
-    {
-    &quot;id&quot;: &quot;1&quot;,
-    &quot;FirstName&quot;: &quot;Karthik&quot;,
-    &quot;LasttName&quot;: &quot;Nat&quot;,
-    &quot;phone&quot;: &quot;1-(123)456-8473&quot;,
-    &quot;email&quot;: &quot;kar.nat0@liveinternet.in&quot;
-    }
-    ]
-    " mimeType="application/json" doc:name="Set Payload POST-Contacts"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload.last_name]]></dw:set-payload>
+        </dw:transform-message>
+        <sfdc:query config-ref="Salesforce__Basic_Authentication" query="dsql:SELECT AccountId,Email,FirstName,LastName,Phone FROM Contact WHERE LastName like '#[payload]'" doc:name="Salesforce"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload map ((payload01 , indexOfPayload01) -> {
+	FirstName: payload01.FirstName,
+	LasttName: payload01.LastName,
+	phone: payload01.Phone,
+	email: payload01.Email
+})]]></dw:set-payload>
+        </dw:transform-message>
+
   </flow>
   <apikit:mapping-exception-strategy name="test-contact-mule-api-apiKitGlobalExceptionMapping">
     <apikit:mapping statusCode="404">
