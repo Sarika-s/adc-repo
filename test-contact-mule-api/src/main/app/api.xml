@@ -32,7 +32,7 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
 ---
 payload.last_name]]></dw:set-payload>
         </dw:transform-message>
-        <sfdc:query config-ref="Salesforce__Basic_Authentication" query="dsql:SELECT AccountId,Email,FirstName,LastName,Phone FROM Contact WHERE LastName like '#[payload]'" doc:name="Salesforce"/>
+        <sfdc:query config-ref="Salesforce__Basic_Authentication" query="dsql:SELECT AccountId, Email, FirstName,LastName,Phone FROM Contact WHERE LastName like '#[payload]'" doc:name="Salesforce"/>
         <dw:transform-message doc:name="Transform Message">
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/json
