@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
 	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
 	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
@@ -11,16 +12,20 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
 
-	
+
 	<http:listener-config name="contacts-mule-api-httpListenerConfig">
 		<http:listener-connection host="0.0.0.0"
 			port="${http.port}" />
 	</http:listener-config>
-	<apikit:config name="contacts-mule-api-config" raml="2e4d0268-918d-4a2d-a2ab-944e2995762a.raml"
+	<apikit:config name="contacts-mule-api-config"
+		raml="2bf2c338-2b93-4b8a-a273-05ef05b06422.raml"
 		outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-	
-	<api-gateway:autodiscovery apiId="${contacts-mule-api.api.id}" doc:name="API Autodiscovery" doc:id="ddec1741-6939-4102-abd6-ce786628eaa8" flowRef="contacts-mule-api-main"/>
-	
-	<configuration-properties doc:name="Configuration properties" doc:id="a1dcd26e-d193-4e84-870a-f586456d6ca0" file="mule-app.properties" />
-	
+
+	<api-gateway:autodiscovery apiId="${contacts-mule-api.api.id}"
+		doc:name="API Autodiscovery" doc:id="ddec1741-6939-4102-abd6-ce786628eaa8"
+		flowRef="contacts-mule-api-main" />
+
+	<configuration-properties doc:name="Configuration properties"
+		doc:id="a1dcd26e-d193-4e84-870a-f586456d6ca0" file="mule-app.properties" />
+
 </mule>

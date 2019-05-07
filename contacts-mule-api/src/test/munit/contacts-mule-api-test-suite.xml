@@ -40,9 +40,19 @@ http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/
 </munit:test>
 <munit:test name="contacts-mule-api-test-suite-get:\contacts\(ID):contacts-mule-api-configTest" description="Verifying functionality of [contacts-mule-api-test-suite-get:\contacts\(ID):contacts-mule-api-configTest]" doc:id="4a2a66bf-b539-4e23-a6b5-ae698696ba58">
   <!--<munit:behavior > <munit-tools:mock-when doc:name="/Mock when/" doc:id="/61d397b9-676e-4937-83fa-529a366384f3" /> </munit:behavior>-->
-  <munit:execution>
+  <munit:behavior >
+<munit-tools:mock-when doc:name="Mock when" doc:id="1d1c721f-35d9-472c-8cd0-e3ea46f1e93a" processor="salesforce:query-single">
+	<munit-tools:with-attributes >
+		<munit-tools:with-attribute attributeName="doc:name" whereValue="GetContactById" />
+	</munit-tools:with-attributes>
+	<munit-tools:then-return >
+		<munit-tools:payload value="#[MunitTools::getResourceAsString('scaffolder/response/get_200_contacts_{ID}_application_json.txt') replace /([\n\s])/ with '']" mediaType="application/json"/>
+	</munit-tools:then-return>
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
     <munit:set-event doc:id="4a2a66bf-b539-4e23-a6b5-ae698697ba58" doc:name="Set Event">
-      <munit:attributes value="#[{ uriParams: {'ID': '11298037'}}]"/>
+      <munit:attributes value="#[{ uriParams: {'ID': '0017F00000UMGyuQAH'}}]"/>
     </munit:set-event>
     <flow-ref doc:name="Flow-ref to get:\contacts\(ID):contacts-mule-api-config" name="get:\contacts\(ID):contacts-mule-api-config" doc:id="4a2a66bf-b539-4e23-a6b5-ae698698ba58"/>
   </munit:execution>

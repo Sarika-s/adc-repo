@@ -137,21 +137,21 @@
   
   
   <flow name="get:\contacts:contacts-mule-api-config">
-    <flow-ref doc:name="RetrievecontactsFlowRef" doc:id="679e4a65-194d-497b-a707-884446f95df3" name="RetrievecontactsImpl"/>
+    <flow-ref doc:name="RetrievecontactsImpl" doc:id="679e4a65-194d-497b-a707-884446f95df3" name="RetrievecontactsImpl"/>
   </flow>
   <flow name="post:\contacts:contacts-mule-api-config">
-    <flow-ref doc:name="CreatecontactsFlowRef" doc:id="679e4a65-194d-497b-a707-884447f95df3" name="CreatecontactsImpl"/>
+    <flow-ref doc:name="CreatecontactsImpl" doc:id="679e4a65-194d-497b-a707-884447f95df3" name="CreatecontactsImpl"/>
   </flow>
   <flow name="get:\contacts\ping:contacts-mule-api-config">
-    <flow-ref doc:name="RetrievecontactspingFlowRef" doc:id="679e4a65-194d-497b-a707-884448f95df3" name="RetrievecontactspingImpl"/>
+    <flow-ref doc:name="RetrievecontactspingImpl" doc:id="679e4a65-194d-497b-a707-884448f95df3" name="RetrievecontactspingImpl"/>
   </flow>
   <flow name="get:\contacts\(ID):contacts-mule-api-config">
-    <flow-ref doc:name="RetrievecontactsByIDFlowRef" doc:id="679e4a65-194d-497b-a707-884449f95df3" name="RetrievecontactsByIDImpl"/>
+    <flow-ref doc:name="RetrievecontactsByIDImpl" doc:id="679e4a65-194d-497b-a707-884449f95df3" name="RetrievecontactsByIDImpl"/>
   </flow>
   <flow name="put:\contacts\(ID):contacts-mule-api-config">
-    <flow-ref doc:name="UpdatecontactsByIDFlowRef" doc:id="679e4a65-194d-497b-a707-884450f95df3" name="UpdatecontactsByIDImpl"/>
+    <flow-ref doc:name="UpdatecontactsByIDImpl" doc:id="679e4a65-194d-497b-a707-884450f95df3" name="UpdatecontactsByIDImpl"/>
   </flow>
   <flow name="delete:\contacts\(ID):contacts-mule-api-config">
-    <flow-ref doc:name="DeletecontactsByIDFlowRef" doc:id="679e4a65-194d-497b-a707-884451f95df3" name="DeletecontactsByIDImpl"/>
+    <flow-ref doc:name="DeletecontactsByIDImpl" doc:id="679e4a65-194d-497b-a707-884451f95df3" name="DeletecontactsByIDImpl"/>
   </flow>
 </mule>
