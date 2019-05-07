@@ -1,0 +1,134 @@
+#%RAML 1.0
+baseUri: https://anypoint.mulesoft.com/mocking/api/v1/links/8c53ad8e-2981-4947-8d17-a1b8a40ed6cf/ # 
+title: Contact API
+version: v1.0
+                
+/contacts:
+  displayName: Contacts
+  description: |
+    Working with contacts:
+    * Retrieving all contacts
+    * Creating contacts
+  get: 
+    description: |
+      To retrieve all of a user's contacts, send an authorized GET request.
+    responses: 
+      200: 
+        body: 
+          application/json: 
+            example: |
+              [{
+                    "ID": "1",
+                    "FirstName": "Nimish",
+                    "LastName": "Rawal",
+                    "Phone": "1-(318)596-8473",
+                    "Email": "ewalker0@liveinternet.ru"
+                    },
+                    {
+                      "ID": "1",
+                      "FirstName": "Anil",
+                      "LastName": "Rawat",
+                      "Phone": "1-(123)456-8473",
+                      "Email": "nim.raw0@liveinternet.ru"
+                    },
+                    {
+                      "ID": "1",
+                      "FirstName": "Karthik",
+                      "LastName": "Nat",
+                      "Phone": "1-(123)456-8473",
+                      "Email": "kar.nat0@liveinternet.in"
+                }]
+            
+  post: 
+    description: |
+      To create a new contact, send an authorized POST request to the user's contacts feed URL with contact data in the body.
+    body: 
+      application/json: 
+        example: |
+          {
+              "FirstName": "Nimish",
+              "LastName": "Rawal",
+              "Phone": "1-(318)596-8473",
+              "Email": "ewalker0@liveinternet.ru"
+          }
+    responses: 
+      201: 
+        description: Created
+        body: 
+          application/json: 
+            example: |
+              {
+                  "ID": "11298037",
+                  "message" : "Contact has been created successfully!"
+              }
+  
+  /ping:
+    get:
+      responses: 
+        200:
+          body:
+            application/json:
+              example:
+                {
+                    "status": "OK"
+                }
+  /{ID}: 
+    displayName: Contact
+    description: |
+      Working with contact:
+      * Retrieving a single contact based on Contact ID passed
+      * Updating contact details for Contact ID passed
+      * Deleting contact details for Contact ID passed
+    get: 
+      description: |
+        To retrieve a single contact, send an authorized GET request to the contact's selfLink URL.
+      responses: 
+        200: 
+          body: 
+            application/json: 
+              example: |
+                {
+                    "ID": "1",
+                    "FirstName": "Nimish",
+                    "LastName": "Rawal",
+                    "Phone": "1-(318)596-8473",
+                    "Email": "ewalker0@liveinternet.ru"
+                }
+    put: 
+      description: |
+        To update a contact, first retrieve the contact entry, modify the data and send an authorized PUT reques
+        to the contact's edit URL with the modified contact entry in the body.
+        **Note**: To ensure forward compatibility, be sure that when you PUT an updated entry you preserve all the XML that was present
+        when you retrieved the entry from the server. Otherwise the ignored elements will be deleted
+      body: 
+        application/json: 
+          example: |
+            {
+                "FirstName": "Nimish",
+                "LastName": "Rawal",
+                "Phone": "1-(318)596-8473",
+                "Email": "ewalker0@liveinternet.ru"
+            }
+      responses: 
+        200: 
+          body: 
+            application/json: 
+              example: |
+                {
+                    "ID": "11298037",
+                    "message" : "Contact has been updated successfully"
+                }
+    delete: 
+      description: |
+        To delete a contact, send an authorized DELETE request to the contact's edit URL.
+      responses: 
+        200: 
+          description: |
+            Contact deleted
+          body: 
+            application/json: 
+                 example: |
+                  {
+                      "ID": "11298037",
+                      "message" : "Contact has been deleted successfully"
+                  } 

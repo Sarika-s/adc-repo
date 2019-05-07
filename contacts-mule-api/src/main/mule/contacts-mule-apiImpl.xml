@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+<sub-flow name="RetrievecontactsImpl" doc:id="4a2a66bf-b539-4e23-a6b5-ae694687ba58">
+  <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core   http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="37422b01-d0f2-4ea8-854f-82f694688dd1" doc:name="Retrievecontacts">
+    <ee:message>
+      <ee:set-payload>
+        <![CDATA[%dw 2.0
+        output application/json
+        ---
+        [{
+        "ID": "1",
+        "FirstName": "Nimish",
+        "LastName": "Rawal",
+        "Phone": "1-(318)596-8473",
+        "Email": "ewalker0@liveinternet.ru"
+        },
+        {
+        "ID": "1",
+        "FirstName": "Anil",
+        "LastName": "Rawat",
+        "Phone": "1-(123)456-8473",
+        "Email": "nim.raw0@liveinternet.ru"
+        },
+        {
+        "ID": "1",
+        "FirstName": "Karthik",
+        "LastName": "Nat",
+        "Phone": "1-(123)456-8473",
+        "Email": "kar.nat0@liveinternet.in"
+        }]
+        ]]>
+      </ee:set-payload>
+    </ee:message>
+  </ee:transform>
+</sub-flow>
+<sub-flow name="CreatecontactsImpl" doc:id="4a2a66bf-b539-4e23-a6b5-ae694689ba58">
+  <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core   http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="37422b01-d0f2-4ea8-854f-82f694690dd1" doc:name="Createcontacts">
+    <ee:message>
+      <ee:set-payload>
+        <![CDATA[%dw 2.0
+        output application/json
+        ---
+        {
+        "ID": "11298037",
+        "message" : "Contact has been created successfully!"
+        }
+        ]]>
+      </ee:set-payload>
+    </ee:message>
+  </ee:transform>
+</sub-flow>
+<sub-flow name="RetrievecontactspingImpl" doc:id="4a2a66bf-b539-4e23-a6b5-ae694691ba58">
+  <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core   http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="37422b01-d0f2-4ea8-854f-82f694692dd1" doc:name="Retrievecontactsping">
+    <ee:message>
+      <ee:set-payload>
+        <![CDATA[%dw 2.0
+        output application/json
+        ---
+        {
+        "status": "OK"
+        }]]>
+      </ee:set-payload>
+    </ee:message>
+  </ee:transform>
+</sub-flow>
+<sub-flow name="RetrievecontactsByIDImpl" doc:id="4a2a66bf-b539-4e23-a6b5-ae694693ba58">
+  <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="86521be9-7d08-440b-ba40-6ceb694693a72">
+    <ee:variables>
+      <ee:set-variable variableName="ID">
+        <![CDATA[attributes.uriParams.ID]]>
+      </ee:set-variable>
+    </ee:variables>
+  </ee:transform>
+  <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core   http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="37422b01-d0f2-4ea8-854f-82f694694dd1" doc:name="RetrievecontactsByID">
+    <ee:message>
+      <ee:set-payload>
+        <![CDATA[%dw 2.0
+        output application/json
+        ---
+        {
+        "ID": "1",
+        "FirstName": "Nimish",
+        "LastName": "Rawal",
+        "Phone": "1-(318)596-8473",
+        "Email": "ewalker0@liveinternet.ru"
+        }
+        ]]>
+      </ee:set-payload>
+    </ee:message>
+  </ee:transform>
+</sub-flow>
+<sub-flow name="UpdatecontactsByIDImpl" doc:id="4a2a66bf-b539-4e23-a6b5-ae694695ba58">
+  <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="86521be9-7d08-440b-ba40-6ceb694695a72">
+    <ee:variables>
+      <ee:set-variable variableName="ID">
+        <![CDATA[attributes.uriParams.ID]]>
+      </ee:set-variable>
+    </ee:variables>
+  </ee:transform>
+  <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core   http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="37422b01-d0f2-4ea8-854f-82f694696dd1" doc:name="UpdatecontactsByID">
+    <ee:message>
+      <ee:set-payload>
+        <![CDATA[%dw 2.0
+        output application/json
+        ---
+        {
+        "ID": "11298037",
+        "message" : "Contact has been updated successfully"
+        }
+        ]]>
+      </ee:set-payload>
+    </ee:message>
+  </ee:transform>
+</sub-flow>
+<sub-flow name="DeletecontactsByIDImpl" doc:id="4a2a66bf-b539-4e23-a6b5-ae694697ba58">
+  <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="86521be9-7d08-440b-ba40-6ceb694697a72">
+    <ee:variables>
+      <ee:set-variable variableName="ID">
+        <![CDATA[attributes.uriParams.ID]]>
+      </ee:set-variable>
+    </ee:variables>
+  </ee:transform>
+  <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core   http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="37422b01-d0f2-4ea8-854f-82f694698dd1" doc:name="DeletecontactsByID">
+    <ee:message>
+      <ee:set-payload>
+        <![CDATA[%dw 2.0
+        output application/json
+        ---
+        {
+        "ID": "11298037",
+        "message" : "Contact has been deleted successfully"
+        }
+        ]]>
+      </ee:set-payload>
+    </ee:message>
+  </ee:transform>
+</sub-flow>
+</mule>

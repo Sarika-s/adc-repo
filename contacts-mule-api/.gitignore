@@ -1,0 +1,5 @@
+.yo-rc.json
+metadata
+node_modules
+coverage
+target

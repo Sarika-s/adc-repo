@@ -1,0 +1,17 @@
+{
+ 	"generator-mule-api-from-raml-4X": {
+ 		"artifactId": "contacts-mule-api",
+ 		"groupId": "com.hcl.adc.mule",
+ 		"muleRuntime": "4.1.x",
+ 		"apiAppName": "ch-contacts-mule-api",
+ 		"inputFileFormat": "",
+ 		"apiId": "15698179",
+ 		"includeMUnitTestCase": true,
+ 		"munitVersion": "2.1.3",
+ 		"muleMavenPluginVersion": "",
+ 		"deployment_env_profile": "",
+ 		"deployment_type": "cloudhub",
+ 		"target_type": "null",
+ 		"target_name": "null"
+ 	}
+ }
